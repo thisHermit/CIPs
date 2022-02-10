@@ -15,15 +15,15 @@ This document describes using a separate derivation path to ensure there is alwa
 
 # Motivation
 
-Collateral input | As of Alonzo, transactions that call Plutus smart contracts are required to put up collateral to cover the potential cost of smart contract execution failure. Inputs used as collateral has the following properties:
+As of Alonzo, transactions that call Plutus smart contracts are required to put up collateral to cover the potential cost of smart contract execution failure. Inputs used as collateral have the following properties:
 
-- Cannot contain any tokens (only ADA)
-- Cannot be a script address
-- Must be a UTXO input
-- Must be at least some percentage of the fee in the tx (concrete percentage decided by a protocol parameter)
-- Can be the same UTXO entry as used in non-collateral tx input
-- Is consumed entirely (no change) if the contract execution fails during phase 2 validation
-- Is not consumed is phase phase 2 validation succeeds
+1. Cannot contain any tokens (only ADA)
+2. Cannot be a script address
+3. Must be a UTXO input
+4. Must be at least some percentage of the fee in the tx (concrete percentage decided by a protocol parameter)
+5. Can be the same UTXO entry as used in non-collateral tx input
+6. Is consumed entirely (no change) if the contract execution fails during phase 2 validation
+7. Is not consumed if phase phase 2 validation succeeds
 
 Additionally, there cannot be more than *maxColInputs* (protocol parameter) inputs and the inputs have to cover a percentage of the fee defined by *collateralPercent* (protocol parameter)
 
@@ -40,7 +40,7 @@ The naive solution would do the following steps
 This however, causes the following problems:
 1. This may cause users to risk more collateral than they are comfortable with. In general, software should run smart contracts locally to detect if a transaction would fail before sending and alert the user to avoid consuming the collateral, but relying on this is not ideal.
 1. Although the rearrange transaction can be created under the hood for in-software wallet, it will confused users when it shows up on their transaction history. For hardware wallets, it will require explicit approval from the user which is also possibly confusing.
-1. Altough wallets can try and always pick UTXOs to make sure there is always a valid UTXO entry for collateral, it can't be guaranteed because the wallet state can always be changed by any dApp or other wallet that doesn't use the same logic to guarantee the presence of satisfactory collateral input
+1. Although wallets can try and always pick UTXOs to make sure there is always a valid UTXO entry for collateral, it can't be guaranteed because the wallet state can always be changed by any dApp or other wallet that doesn't use the same logic to guarantee the presence of satisfactory collateral input
 1. Multisig wallets don't have any non-script addresses in general and so would need some separate solution
 
 So with this, we can see the naive solution is complicated while still having issues and an unintuitive user experience.
